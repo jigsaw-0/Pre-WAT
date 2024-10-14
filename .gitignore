@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# ignore raw data
+R/data/salmon_output
+
+# ignore .DS_Store
+.DS_Store
