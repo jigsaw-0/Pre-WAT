@@ -1,0 +1,68 @@
+[2024-10-16 15:37:32] [INFO]    [OmnipathR] Welcome to OmnipathR!
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:37:32] [INFO]    [OmnipathR] Initialized cache: `/Users/jigsaw-0/Library/Caches/OmnipathR`.
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] Reading JSON from `/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/OmnipathR/db/db_def.json` (encoding: UTF-8).
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] Reading JSON from `/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/OmnipathR/internal/magic_bytes.json` (encoding: UTF-8).
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] Reading JSON from `/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/OmnipathR/internal/urls.json` (encoding: UTF-8).
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] Reading JSON from `/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library/OmnipathR/internal/id_types.json` (encoding: UTF-8).
+[2024-10-16 15:37:32] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:18] [INFO]    [OmnipathR] Loading database `Ensembl and OMA organism names`.
+[2024-10-16 15:40:18] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:40:18] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:18] [INFO]    [OmnipathR] Looking up in cache `https://www.ensembl.org/info/about/species.html`: key=7332486db7400730697234bad76ca0c8e4d00799, no version available.
+[2024-10-16 15:40:18] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:40:18] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:18] [INFO]    [OmnipathR] Created new version for cache record 7332486db7400730697234bad76ca0c8e4d00799: version 1.
+[2024-10-16 15:40:18] [TRACE]   [OmnipathR] Cache file path: /Users/jigsaw-0/Library/Caches/OmnipathR/7332486db7400730697234bad76ca0c8e4d00799-1.html
+[2024-10-16 15:40:18] [INFO]    [OmnipathR] Retrieving URL: `https://www.ensembl.org/info/about/species.html`
+[2024-10-16 15:40:18] [TRACE]   [OmnipathR] Attempt 1/3: `https://www.ensembl.org/info/about/species.html`
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] HTTP 200
+[2024-10-16 15:40:21] [INFO]    [OmnipathR] Download ready [key=7332486db7400730697234bad76ca0c8e4d00799, version=1]
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:21] [INFO]    [OmnipathR] Cache item `7332486db7400730697234bad76ca0c8e4d00799` version 1: status changed from `unknown` to `ready`.
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] Looking up in cache: `https://omabrowser.org/All/oma-species.txt`.
+[2024-10-16 15:40:21] [INFO]    [OmnipathR] Cache record does not exist: `https://omabrowser.org/All/oma-species.txt`
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] Could not find in cache, initiating download: `https://omabrowser.org/All/oma-species.txt`.
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:21] [INFO]    [OmnipathR] Cache item `30e690cbb55dfc63b5903ab337f34ffc2f4be397` version 1: status changed from `unknown` to `started`.
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] Exporting object to RDS: `/Users/jigsaw-0/Library/Caches/OmnipathR/30e690cbb55dfc63b5903ab337f34ffc2f4be397-1.rds`.
+[2024-10-16 15:40:21] [INFO]    [OmnipathR] Retrieving URL: `https://omabrowser.org/All/oma-species.txt`
+[2024-10-16 15:40:21] [TRACE]   [OmnipathR] Attempt 1/3: `https://omabrowser.org/All/oma-species.txt`
+[2024-10-16 15:40:25] [TRACE]   [OmnipathR] Exported RDS to `/Users/jigsaw-0/Library/Caches/OmnipathR/30e690cbb55dfc63b5903ab337f34ffc2f4be397-1.rds`.
+[2024-10-16 15:40:25] [INFO]    [OmnipathR] Download ready [key=30e690cbb55dfc63b5903ab337f34ffc2f4be397, version=1]
+[2024-10-16 15:40:25] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:40:25] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:25] [INFO]    [OmnipathR] Cache item `30e690cbb55dfc63b5903ab337f34ffc2f4be397` version 1: status changed from `started` to `ready`.
+[2024-10-16 15:40:25] [INFO]    [OmnipathR] Loaded database `Ensembl and OMA organism names`.
+[2024-10-16 15:40:25] [TRACE]   [OmnipathR] Looking up in cache: `https://omnipathdb.org/interactions?genesymbols=yes&datasets=collectri&organisms=10090&dorothea_levels=A,B&fields=evidences,sources,references,curation_effort&loops=yes&license=academic`
+[2024-10-16 15:40:25] [INFO]    [OmnipathR] Cache record does not exist: `https://omnipathdb.org/interactions?genesymbols=yes&datasets=collectri&organisms=10090&dorothea_levels=A,B&fields=evidences,sources,references,curation_effort&loops=yes&license=academic`
+[2024-10-16 15:40:25] [TRACE]   [OmnipathR] Looking up in cache: `http://no-tls.omnipathdb.org/interactions?genesymbols=yes&datasets=collectri&organisms=10090&dorothea_levels=A,B&fields=evidences,sources,references,curation_effort&loops=yes&license=academic`
+[2024-10-16 15:40:25] [INFO]    [OmnipathR] Cache record does not exist: `http://no-tls.omnipathdb.org/interactions?genesymbols=yes&datasets=collectri&organisms=10090&dorothea_levels=A,B&fields=evidences,sources,references,curation_effort&loops=yes&license=academic`
+[2024-10-16 15:40:25] [TRACE]   [OmnipathR] Attempting `https://omnipathdb.org/interactions?genesymbols=yes&datasets=collectri&organisms=10090&dorothea_levels=A,B&fields=evidences,sources,references,curation_effort&loops=yes&license=academic`
+[2024-10-16 15:40:25] [INFO]    [OmnipathR] Retrieving URL: `https://omnipathdb.org/interactions?genesymbols=yes&datasets=collectri&organisms=10090&dorothea_levels=A,B&fields=evidences,sources,references,curation_effort&loops=yes&license=academic`
+[2024-10-16 15:40:25] [TRACE]   [OmnipathR] Attempt 1/3: `https://omnipathdb.org/interactions?genesymbols=yes&datasets=collectri&organisms=10090&dorothea_levels=A,B&fields=evidences,sources,references,curation_effort&loops=yes&license=academic`
+[2024-10-16 15:40:35] [INFO]    [OmnipathR] Successfully retrieved: `https://omnipathdb.org/interactions?genesymbols=yes&datasets=collectri&organisms=10090&dorothea_levels=A,B&fields=evidences,sources,references,curation_effort&loops=yes&license=academic`
+[2024-10-16 15:40:35] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:40:35] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:35] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:40:35] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:35] [INFO]    [OmnipathR] Cache item `107896962c7d5fc50d4cbc51809a591cd50bb105` version 1: status changed from `unknown` to `started`.
+[2024-10-16 15:40:35] [TRACE]   [OmnipathR] Exporting object to RDS: `/Users/jigsaw-0/Library/Caches/OmnipathR/107896962c7d5fc50d4cbc51809a591cd50bb105-1.rds`.
+[2024-10-16 15:40:36] [TRACE]   [OmnipathR] Exported RDS to `/Users/jigsaw-0/Library/Caches/OmnipathR/107896962c7d5fc50d4cbc51809a591cd50bb105-1.rds`.
+[2024-10-16 15:40:36] [INFO]    [OmnipathR] Download ready [key=107896962c7d5fc50d4cbc51809a591cd50bb105, version=1]
+[2024-10-16 15:40:36] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2024-10-16 15:40:36] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2024-10-16 15:40:36] [INFO]    [OmnipathR] Cache item `107896962c7d5fc50d4cbc51809a591cd50bb105` version 1: status changed from `started` to `ready`.
+[2024-10-16 15:40:36] [TRACE]   [OmnipathR] Converting JSON column `evidences` to list.
+[2024-10-16 15:40:37] [TRACE]   [OmnipathR] Restricting interaction records to datasets: collectri; and resources: any
+[2024-10-16 15:40:38] [TRACE]   [OmnipathR] Filtering evidence columns: positive, negative, directed, undirected; to datasets: collectri; and resources: any; excluding resources: none
+[2024-10-16 15:40:55] [SUCCESS] [OmnipathR] Downloaded 38823 interactions.
+[2024-10-16 18:42:02] [TRACE]   [OmnipathR] Removing database `Ensembl and OMA organism names` (not used in the past 10800 seconds)
