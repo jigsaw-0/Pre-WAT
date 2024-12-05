@@ -151,7 +151,7 @@ RLEplot <- function(X_vst, group_colors, raw.mat = FALSE, font_size = 15, box.on
 #===============================#
 #   PCAplot : Plot PCA result   #
 #===============================#
-PCAplot <- function(X_vst, grp_col, ext_grp = NULL, grp_shape = NULL,
+PCAplot <- function(X_vst, grp = "Group", grp_col, ext_grp = NULL, grp_shape = NULL,
                     pt_sz = 5, lab_sz = 3, glob_txt_sz = 10) {
     dat <- t(SummarizedExperiment::assay(X_vst))  # [matrix] (sample) x (features)
     
@@ -165,7 +165,7 @@ PCAplot <- function(X_vst, grp_col, ext_grp = NULL, grp_shape = NULL,
     
     if (is.null(ext_grp)) {
         pca.df <- data.frame(PC1 = pca$x[, 1], PC2 = pca$x[, 2],
-                             Group = X_vst$Group)
+                             Group = X_vst[[grp]])
         
         rownames(pca.df) <- colnames(X_vst) 
         
@@ -183,7 +183,7 @@ PCAplot <- function(X_vst, grp_col, ext_grp = NULL, grp_shape = NULL,
         }
         
         pca.df <- data.frame(PC1 = pca$x[, 1], PC2 = pca$x[, 2],
-                             Group = X_vst$Group,
+                             Group = X_vst[[grp]],
                              ExtGrp = SummarizedExperiment::colData(vst)[ext_grp][, 1])
         
         rownames(pca.df) <- colnames(X_vst) 

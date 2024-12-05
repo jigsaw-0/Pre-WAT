@@ -4,7 +4,7 @@ setwd("/Users/jigsaw-0/Workspace/KMPC/Pre-WAT/R/")
 # package handling
 packages <- c("tidyverse", "reshape2", "readxl", "writexl",
               "AnnotationHub", "ensembldb", "biomaRt", "fst", "msigdbr",
-              "tximport", "DESeq2", "apeglm", "ashr",
+              "sva", "tximport", "DESeq2", "apeglm", "ashr",
               "AnnotationDbi", "org.Mm.eg.db", "org.Hs.eg.db",
               "GSVA", "decoupleR", "OmnipathR", "clusterProfiler",
               "EnhancedVolcano", "circlize", "ggrepel", "ComplexHeatmap")
@@ -800,7 +800,7 @@ coldata$AD_CL <- c("AD_N.CL_N", "AD_N.CL_N",  # IM-B6 --> AD(-), CL(-)
                    "AD_P.CL_P", "AD_P.CL_P",  # 129-22 --> AD(+), CL(+)
                    "AD_P.CL_N", "AD_P.CL_N")  # 129-23 --> AD(+), CL(-)
 
-coldata$AD_CL <- factor(coldata$AD_CL, levels = c("AD_N.CL_N", "AD_P.CL_N", "AD_P.CL_P"))
+coldata$AD_CL <- factor(coldata$AD_CL, levels = c("AD_N.CL_N", "AD_P.CL_P", "AD_P.CL_N"))  # for consistency with 129-22 vs 129-23 / B6-27 vs B6-28 case
 
 dds.AD_CL <- DESeq2::DESeqDataSetFromTximport(txi = txi, 
                                               colData = coldata, 
@@ -812,14 +812,19 @@ ddsX.AD_CL <- DESeq2::DESeq(dds.AD_CL)
 
 vst.AD_CL <- DESeq2::vst(ddsX.AD_CL, blind = F)
 
-AD_CL.res <- DESeq2::lfcShrink(ddsX.AD_CL, contrast = c("AD_CL", "AD_P.CL_P", "AD_P.CL_N"), type = "ashr")  # genes with logFC > 0 are overexpressed in AD_P.CL_P
+PCAplot(vst.AD_CL, 
+        grp = "AD_CL",
+        grp_col = group_colors3,
+        pt_sz = 8, lab_sz = 4, glob_txt_sz = 16)
+
+AD_CL.res <- DESeq2::lfcShrink(ddsX.AD_CL, contrast = c("AD_CL", "AD_P.CL_N", "AD_P.CL_P"), type = "ashr")  # genes with logFC > 0 are overexpressed in AD_P.CL_P
 AD_CL.res <- DDSAddSymbols(AD_CL.res)
 
 AD_CL.sig_res <- AD_CL.res %>%
     dplyr::filter(padj < 0.05 & abs(log2FoldChange) > 0.58) %>%
     dplyr::filter(!grepl("^Gm[0-9]", external_gene_name) & !grepl("[0-9]Rik", external_gene_name))
 
-writexl::write_xlsx(AD_CL.sig_res, path = "results/DEG_129_22_vs_23/AD_CL.sig_res.xlsx")
+writexl::write_xlsx(AD_CL.sig_res, path = "results/DEG_PN_vs_PP/AD_CL.sig_res.xlsx")
 
 AD_CL.res$padj_pc <- AD_CL.res$padj + .Machine$double.xmin  # add pseudo-count to avoid 0 pvalues
 AD_CL.top_genes <- c(AD_CL.sig_res %>% dplyr::top_n(n = 10, log2FoldChange) %>% dplyr::pull(external_gene_name),
@@ -830,6 +835,8 @@ Volcanoplot(res_df = AD_CL.res,
             target_genes = AD_CL.sig_res$external_gene_name,
             label_size = 5,
             ylim = c(0, 8))
+
+
 
 MT129_22_vs_MT129_23.sig_res %>% 
     dplyr::filter(external_gene_name %in% intersect(MT129_22_vs_MT129_23.sig_res$external_gene_name, regulons$source)) %>%
@@ -843,11 +850,165 @@ MarkersExprsHeatmap(X_vst = MT129_22_vs_MT129_23.vst,
 
 
 
+# Let's think of mouse type as a batch and use corrected counts to compare AD_CL cases
+BC_dds <- DESeq2::DESeqDataSetFromTximport(txi = txi, 
+                                           colData = coldata, 
+                                           design = ~AD_CL)
+
+BC_dds <- BC_dds[rowSums(BiocGenerics::counts(BC_dds) >= 10) > 3, ]
+
+batch_corrected <- sva::ComBat_seq(counts = counts(BC_dds),
+                                   batch = coldata$MouseType,
+                                   group = coldata$AD_CL)
+
+# https://stackoverflow.com/questions/36943953/fastest-way-to-coerce-matrix-to-integer-matrix-in-r
+mode(batch_corrected) <- "integer"
+
+counts(BC_dds) <- batch_corrected
+
+BC_ddsX <- DESeq2::DESeq(BC_dds)
+
+BC_vst <- DESeq2::vst(BC_ddsX, blind = F)
+
+group_colors3 <- c(
+    "AD_N.CL_N" = "#3498db",
+    "AD_P.CL_P" = "#e74c3c",
+    "AD_P.CL_N" = "#9b59b6"
+)
+
+PCAplot(BC_vst, 
+        grp = "AD_CL",
+        grp_col = group_colors3,
+        pt_sz = 8, lab_sz = 4, glob_txt_sz = 16)
+
+BC_res <- DESeq2::lfcShrink(BC_ddsX, contrast = c("AD_CL", "AD_P.CL_N", "AD_P.CL_P"), type = "ashr")
+BC_res <- DDSAddSymbols(BC_res)
+
+BC_sig_res <- BC_res %>%
+    dplyr::filter(padj < 0.05 & abs(log2FoldChange) > 0.58) %>%
+    dplyr::filter(!grepl("^Gm[0-9]", external_gene_name) & !grepl("[0-9]Rik", external_gene_name))
+
+BC_res$padj_pc <- BC_res$padj + .Machine$double.xmin  # add pseudo-count to avoid 0 pvalues
+BC_top_genes <- c(BC_sig_res %>% dplyr::top_n(n = 10, log2FoldChange) %>% dplyr::pull(external_gene_name),
+                  BC_sig_res %>% dplyr::top_n(n = -10, log2FoldChange) %>% dplyr::pull(external_gene_name))
+
+Volcanoplot(res_df = BC_res,
+            y = "padj_pc",
+            target_genes = BC_sig_res$external_gene_name,
+            label_size = 5,
+            ylim = c(0, 8))
+
+# what about just adding batch term to deseq design? --> I prefer this one over using sva (let's use sva for unknown batch correction)
+BC_dds2 <- DESeq2::DESeqDataSetFromTximport(txi = txi, 
+                                            colData = coldata, 
+                                            design = ~ MouseType + AD_CL)  # consider MouseType as a batch effect
+
+BC_dds2 <- BC_dds2[rowSums(BiocGenerics::counts(BC_dds2) >= 5) >= 2, ]
+
+target_sample_count_crit <- (BiocGenerics::counts(BC_dds2) %>% 
+    as.data.frame() %>%
+    dplyr::select("B6-27_1", "B6-27_2", "B6-28_1", "B6-28_2", "129-22_1", "129-22_2", "129-23_1", "129-23_2") %>%
+    {rowSums(. > 5) >= 4})
+
+BC_dds2 <- BC_dds2[target_sample_count_crit, ]  # add additional count filter to prevent making high LFC in comparison like (0, 0) vs (1, 1)
+
+BC_ddsX2 <- DESeq2::DESeq(BC_dds2)
+
+BC_vst2 <- DESeq2::vst(BC_ddsX2, blind = F)
+
+BC_res2 <- DESeq2::lfcShrink(BC_ddsX2, contrast = c("AD_CL", "AD_P.CL_N", "AD_P.CL_P"), type = "ashr")
+BC_res2 <- DDSAddSymbols(BC_res2)
+
+BC_sig_res2 <- BC_res2 %>%
+    dplyr::filter(padj < 0.05 & abs(log2FoldChange) > 1) %>%
+    dplyr::filter(!grepl("^Gm[0-9]", external_gene_name) & !grepl("[0-9]Rik", external_gene_name))
+
+writexl::write_xlsx(BC_sig_res2, path = "results/DEG_PN_vs_PP/Batch_Corrected.sig_res.xlsx")
+
+BC_res2$padj_pc <- BC_res2$padj + .Machine$double.xmin  # add pseudo-count to avoid 0 pvalues
+BC_top_genes2 <- c(BC_sig_res2 %>% dplyr::top_n(n = 10, log2FoldChange) %>% dplyr::pull(external_gene_name),
+                   BC_sig_res2 %>% dplyr::top_n(n = -10, log2FoldChange) %>% dplyr::pull(external_gene_name))
+
+Volcanoplot(res_df = BC_res2,
+            y = "padj_pc",
+            target_genes = BC_sig_res2$external_gene_name,
+            label_size = 5,
+            ylim = c(0, 8))
+
+
+
+BC_sva_raw_counts <- counts(BC_ddsX, normalized = F) %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column(var = "ENSG") %>%
+    dplyr::filter(ENSG %in% BC_sig_res2$ENSG) %>%
+    dplyr::left_join(BC_sig_res2 %>% dplyr::select(external_gene_name, ENSG, log2FoldChange, padj, baseMean), by = "ENSG") %>%
+    #dplyr::select(external_gene_name, log2FoldChange, dplyr::everything()) %>%
+    #dplyr::select(-ENSG, -padj, -baseMean)
+    dplyr::select(external_gene_name, log2FoldChange, padj, baseMean, "B6-27_1", "B6-27_2", "B6-28_1", "B6-28_2", "129-22_1", "129-22_2", "129-23_1", "129-23_2")
 
 
 
 
+BC_raw_counts <- counts(BC_ddsX2, normalized = F) %>% 
+    as.data.frame() %>%
+    tibble::rownames_to_column(var = "ENSG") %>%
+    dplyr::filter(ENSG %in% BC_sig_res2$ENSG) %>%
+    dplyr::left_join(BC_sig_res2 %>% dplyr::select(external_gene_name, ENSG, log2FoldChange, padj, baseMean), by = "ENSG") %>%
+    #dplyr::select(external_gene_name, log2FoldChange, dplyr::everything()) %>%
+    #dplyr::select(-ENSG, -padj, -baseMean)
+    dplyr::select(external_gene_name, log2FoldChange, padj, baseMean, "B6-27_1", "B6-27_2", "B6-28_1", "B6-28_2", "129-22_1", "129-22_2", "129-23_1", "129-23_2")
 
+View(BC_raw_counts)
+
+writexl::write_xlsx(BC_raw_counts, path = "results/DEG_PN_vs_PP/BC_raw_counts.xlsx")
+
+
+BC_norm_counts <- SummarizedExperiment::assay(BC_vst2) %>% 
+    as.data.frame() %>%
+    tibble::rownames_to_column(var = "ENSG") %>%
+    dplyr::filter(ENSG %in% BC_sig_res2$ENSG) %>%
+    dplyr::left_join(BC_sig_res2 %>% dplyr::select(external_gene_name, ENSG, log2FoldChange, padj, baseMean), by = "ENSG") %>%
+    #dplyr::select(external_gene_name, dplyr::everything())
+    dplyr::select(external_gene_name, log2FoldChange, padj, baseMean, "B6-27_1", "B6-27_2", "B6-28_1", "B6-28_2", "129-22_1", "129-22_2", "129-23_1", "129-23_2")
+
+View(BC_norm_counts)
+
+writexl::write_xlsx(BC_norm_counts, path = "results/DEG_PN_vs_PP/BC_norm_counts.xlsx")
+
+
+
+
+# Venn Diagram
+intersect(MTB6_27_vs_MTB6_28.sig_res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name), 
+          MT129_22_vs_MT129_23.sig_res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name)) %>% length()
+
+intersect(BC_sig_res2 %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name),
+intersect(MTB6_27_vs_MTB6_28.sig_res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name), 
+          MT129_22_vs_MT129_23.sig_res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name)))
+
+
+MTB6_27_vs_MTB6_28.sig_res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name) %>% length()
+MT129_22_vs_MT129_23.sig_res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name) %>% length()
+
+intersect(MTB6_27_vs_MTB6_28.sig_res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name), 
+          MT129_22_vs_MT129_23.sig_res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name)) %>% length()
+
+test_bc <- BC_sig_res2 %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name)
+test_b6 <- MTB6_27_vs_MTB6_28.sig_res %>% dplyr::filter(log2FoldChange < -1) %>% dplyr::pull(external_gene_name)
+test_b6_loose <- MTB6_27_vs_MTB6_28.res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name)
+test_129 <- MT129_22_vs_MT129_23.sig_res %>% dplyr::filter(log2FoldChange < -1) %>% dplyr::pull(external_gene_name)
+test_129_loose <- MT129_22_vs_MT129_23.res %>% dplyr::filter(log2FoldChange < 0) %>% dplyr::pull(external_gene_name)
+
+test_bc[!(test_bc %in% c(test_b6, test_129))]
+
+setdiff(test_bc, c(test_b6, test_129))
+setdiff(test_bc, c(test_b6_loose, test_129_loose))
+
+setdiff(test_bc, intersect(test_b6, test_129))
+
+intersect(test_b6, test_129)
+test_b6 %>% length()
+test_129 %>% length()
 
 
 
