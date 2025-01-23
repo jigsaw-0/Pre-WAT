@@ -151,9 +151,13 @@ RLEplot <- function(X_vst, group_colors, raw.mat = FALSE, font_size = 15, box.on
 #===============================#
 #   PCAplot : Plot PCA result   #
 #===============================#
-PCAplot <- function(X_vst, grp = "Group", grp_col, ext_grp = NULL, grp_shape = NULL,
+PCAplot <- function(X_vst, ntop = 500, grp = "Group", grp_col, ext_grp = NULL, grp_shape = NULL,
                     pt_sz = 5, lab_sz = 3, glob_txt_sz = 10) {
-    dat <- t(SummarizedExperiment::assay(X_vst))  # [matrix] (sample) x (features)
+    dat <- SummarizedExperiment::assay(X_vst)
+    
+    rv <- rowVars(dat)
+    hvg <- order(rv, decreasing = T)[seq_len(min(ntop, length(rv)))]
+    dat <- t(dat[hvg, ])  # [matrix] (sample) x (features)
     
     if (!all(apply(dat, MARGIN = 2, var) != 0)) {
         dat <- dat[, which(apply(dat, MARGIN = 2, var) != 0)]

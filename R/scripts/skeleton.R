@@ -12,6 +12,9 @@ packages <- c("tidyverse", "reshape2", "readxl", "writexl",
 # install pacakges
 BiocManager::install(packages)
 
+# re-init renv
+renv::init()  # select re-initialization
+
 # load packages
 invisible(lapply(packages, library, character.only = T))
 
@@ -141,6 +144,11 @@ vst.pca <- PCAplot(vst,
                    grp_shape = group_shape,
                    pt_sz = 8, lab_sz = 4, glob_txt_sz = 16)
 
+vst.pca2 <- PCAplot(vst, 
+                   grp_col = group_colors,
+                   ext_grp = "MouseType",
+                   grp_shape = group_shape,
+                   pt_sz = 8, lab_sz = 4, glob_txt_sz = 16)
 
 # heatmap annotation for mouse type
 vst.col_annot <- ComplexHeatmap::HeatmapAnnotation(df = coldata[, "MouseType", drop = F],
