@@ -151,13 +151,26 @@ RLEplot <- function(X_vst, group_colors, raw.mat = FALSE, font_size = 15, box.on
 #===============================#
 #   PCAplot : Plot PCA result   #
 #===============================#
-PCAplot <- function(X_vst, ntop = 500, grp = "Group", grp_col, ext_grp = NULL, grp_shape = NULL,
+PCAplot <- function(X_vst, ntop = 500, genes = NA, metadata = NA,
+                    grp = "Group", grp_col, ext_grp = NULL, grp_shape = NULL,
                     pt_sz = 5, lab_sz = 3, glob_txt_sz = 10) {
-    dat <- SummarizedExperiment::assay(X_vst)
+    if (is(X_vst, "DESeqTransform")){
+        dat <- SummarizedExperiment::assay(X_vst)
+    } else {
+        if (is.matrix(X_vst)) {
+            dat <- X_vst
+        } else if (is.data.frame(X_vst)) {
+            dat <- as.matrix(X_vst)
+        }
+    }
     
-    rv <- rowVars(dat)
-    hvg <- order(rv, decreasing = T)[seq_len(min(ntop, length(rv)))]
-    dat <- t(dat[hvg, ])  # [matrix] (sample) x (features)
+    if (is.na(genes)) {
+        rv <- rowVars(dat)
+        hvg <- order(rv, decreasing = T)[seq_len(min(ntop, length(rv)))]
+        dat <- t(dat[hvg, ])  # [matrix] (sample) x (features)
+    } else {
+        dat <- t(dat)
+    }
     
     if (!all(apply(dat, MARGIN = 2, var) != 0)) {
         dat <- dat[, which(apply(dat, MARGIN = 2, var) != 0)]
