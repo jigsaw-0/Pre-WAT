@@ -151,25 +151,39 @@ RLEplot <- function(X_vst, group_colors, raw.mat = FALSE, font_size = 15, box.on
 #===============================#
 #   PCAplot : Plot PCA result   #
 #===============================#
-PCAplot <- function(X_vst, ntop = 500, genes = NA, metadata = NA,
+PCAplot <- function(X_vst, ntop = 500, genes = NULL, metadata = NULL,
                     grp = "Group", grp_col, ext_grp = NULL, grp_shape = NULL,
-                    pt_sz = 5, lab_sz = 3, glob_txt_sz = 10) {
+                    pt_sz = 5, lab_sz = 3, glob_txt_sz = 10, leg_pos = "right") {
     if (is(X_vst, "DESeqTransform")){
         dat <- SummarizedExperiment::assay(X_vst)
+        group <- X_vst[[grp]]
+        names <- colnames(X_vst)
+        metadata <- colData(X_vst)
     } else {
+        if (is.null(metadata))  stop("You must give metadata if you want to use custom dataframe!")
+        group <- metadata[[grp]]
+        names <- rownames(metadata)
+        
         if (is.matrix(X_vst)) {
             dat <- X_vst
         } else if (is.data.frame(X_vst)) {
             dat <- as.matrix(X_vst)
         }
+        
+        dat <- log2(dat+1)
     }
     
-    if (is.na(genes)) {
+    if (is.null(genes)) {
         rv <- rowVars(dat)
         hvg <- order(rv, decreasing = T)[seq_len(min(ntop, length(rv)))]
         dat <- t(dat[hvg, ])  # [matrix] (sample) x (features)
     } else {
-        dat <- t(dat)
+        genes <-biomart.cache %>% 
+            dplyr::filter(external_gene_name %in% genes) %>% 
+            dplyr::pull(ensembl_gene_id) %>%
+            unique()
+        
+        dat <- t(dat[rownames(dat) %in% genes, ])  # [matrix] (sample) x (features)
     }
     
     if (!all(apply(dat, MARGIN = 2, var) != 0)) {
@@ -182,34 +196,34 @@ PCAplot <- function(X_vst, ntop = 500, genes = NA, metadata = NA,
     
     if (is.null(ext_grp)) {
         pca.df <- data.frame(PC1 = pca$x[, 1], PC2 = pca$x[, 2],
-                             Group = X_vst[[grp]])
+                             Group = group)
         
-        rownames(pca.df) <- colnames(X_vst) 
+        rownames(pca.df) <- names
         
         plot <- ggplot(pca.df, aes(x = PC1, y = PC2)) +
-            geom_point(size = pt_sz, aes(fill = Group), shape = 21, color = "black") + 
+            geom_point(size = pt_sz, aes(fill = Group), shape = 21) + 
             scale_fill_manual(values = grp_col) + 
             xlab(paste0("PC1 : ", percentVar[1], '%')) +
             ylab(paste0("PC2 : ", percentVar[2], '%')) +
             geom_text_repel(size = lab_sz, label = rownames(pca.df)) +
             theme_minimal() + 
-            theme(text = element_text(size = glob_txt_sz))
+            theme(text = element_text(size = glob_txt_sz), legend.position = leg_pos)
     } else {
         if (is.null(grp_shape)) {
             stop("you should give group shape!")
         }
         
         pca.df <- data.frame(PC1 = pca$x[, 1], PC2 = pca$x[, 2],
-                             Group = X_vst[[grp]],
-                             ExtGrp = SummarizedExperiment::colData(vst)[ext_grp][, 1])
+                             Group = group,
+                             ExtGrp = metadata[ext_grp][, 1])
         
-        rownames(pca.df) <- colnames(X_vst) 
+        rownames(pca.df) <- names
         
         plot <- ggplot(pca.df, aes(x = PC1, y = PC2)) +
             
             # you should use shape 21 ~ 25 to use both shape and fill
             # https://stackoverflow.com/questions/15965870/fill-and-border-colour-in-geom-point-scale-colour-manual-in-ggplot
-            geom_point(size = pt_sz, aes(fill = Group, shape = ExtGrp), color = "black") + 
+            geom_point(size = pt_sz, aes(fill = Group, shape = ExtGrp)) + 
             
             scale_shape_manual(values = grp_shape) +
             scale_fill_manual(values = grp_col) + 
@@ -217,7 +231,7 @@ PCAplot <- function(X_vst, ntop = 500, genes = NA, metadata = NA,
             ylab(paste0("PC2 : ", percentVar[2], '%')) +
             geom_text_repel(size = lab_sz, label = rownames(pca.df)) +
             theme_minimal() + 
-            theme(text = element_text(size = glob_txt_sz))
+            theme(text = element_text(size = glob_txt_sz), legend.position = leg_pos)
     }
     
     return(plot)

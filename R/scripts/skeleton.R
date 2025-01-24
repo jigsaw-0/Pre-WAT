@@ -138,17 +138,47 @@ group_shape <- c("B6" = 21, "129" = 24)
 #RLEplot(vst, group_colors = group_colors.transparent, box.only = T)
 
 
-vst.pca <- PCAplot(vst, 
+vst.pca <- PCAplot(vst,
+                   ntop = nrow(vst),
                    grp_col = group_colors,
                    ext_grp = "MouseType",
                    grp_shape = group_shape,
-                   pt_sz = 8, lab_sz = 4, glob_txt_sz = 16)
+                   pt_sz = 8, lab_sz = 4, glob_txt_sz = 16, leg_pos = "none")
 
-vst.pca2 <- PCAplot(vst, 
+vst.pca <- PCAplot(vst,
+                   ntop = 300,
                    grp_col = group_colors,
                    ext_grp = "MouseType",
                    grp_shape = group_shape,
-                   pt_sz = 8, lab_sz = 4, glob_txt_sz = 16)
+                   pt_sz = 8, lab_sz = 4, glob_txt_sz = 16, leg_pos = "none")
+
+vst.pca <- PCAplot(vst,
+                   genes = adipocyte_markers,
+                   grp_col = group_colors,
+                   ext_grp = "MouseType",
+                   grp_shape = group_shape,
+                   pt_sz = 8, lab_sz = 4, glob_txt_sz = 16, leg_pos = "none")
+
+vst.pca2 <- PCAplot(txi$abundance, metadata = coldata,
+                    ntop = nrow(txi$abundance),
+                    grp_col = group_colors,
+                    ext_grp = "MouseType",
+                    grp_shape = group_shape,
+                    pt_sz = 8, lab_sz = 4, glob_txt_sz = 16, leg_pos = "none")
+
+vst.pca2 <- PCAplot(txi$abundance, metadata = coldata,
+                    ntop = 100,
+                    grp_col = group_colors,
+                    ext_grp = "MouseType",
+                    grp_shape = group_shape,
+                    pt_sz = 8, lab_sz = 4, glob_txt_sz = 16, leg_pos = "none")
+
+vst.pca2 <- PCAplot(txi$abundance, metadata = coldata,
+                    genes = adipocyte_markers,
+                    grp_col = group_colors,
+                    ext_grp = "MouseType",
+                    grp_shape = group_shape,
+                    pt_sz = 8, lab_sz = 4, glob_txt_sz = 16, leg_pos = "none")
 
 # heatmap annotation for mouse type
 vst.col_annot <- ComplexHeatmap::HeatmapAnnotation(df = coldata[, "MouseType", drop = F],
@@ -885,9 +915,23 @@ group_colors3 <- c(
 )
 
 PCAplot(BC_vst, 
+        ntop = 100,
         grp = "AD_CL",
         grp_col = group_colors3,
         pt_sz = 8, lab_sz = 4, glob_txt_sz = 16)
+
+PCAplot(BC_vst, 
+        genes = BC_sig_res$external_gene_name,
+        grp = "AD_CL",
+        grp_col = group_colors3,
+        pt_sz = 8, lab_sz = 4, glob_txt_sz = 16)
+
+PCAplot(BC_vst, 
+        genes = adipocyte_markers,
+        grp = "AD_CL",
+        grp_col = group_colors3,
+        pt_sz = 8, lab_sz = 4, glob_txt_sz = 16)
+
 
 BC_res <- DESeq2::lfcShrink(BC_ddsX, contrast = c("AD_CL", "AD_P.CL_N", "AD_P.CL_P"), type = "ashr")
 BC_res <- DDSAddSymbols(BC_res)

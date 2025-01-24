@@ -1,0 +1,13 @@
+[2025-01-24 10:19:06] [INFO]    [OmnipathR] Welcome to OmnipathR!
+[2025-01-24 10:19:06] [INFO]    [OmnipathR] OmnipathR version: 3.14.0
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Library/Caches/OmnipathR/cache.json` (encoding: UTF-8).
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2025-01-24 10:19:06] [INFO]    [OmnipathR] Initialized cache: `/Users/jigsaw-0/Library/Caches/OmnipathR`.
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Workspace/KMPC/Pre-WAT/R/renv/library/macos/R-4.4/aarch64-apple-darwin20/OmnipathR/db/db_def.json` (encoding: UTF-8).
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Workspace/KMPC/Pre-WAT/R/renv/library/macos/R-4.4/aarch64-apple-darwin20/OmnipathR/internal/magic_bytes.json` (encoding: UTF-8).
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Workspace/KMPC/Pre-WAT/R/renv/library/macos/R-4.4/aarch64-apple-darwin20/OmnipathR/internal/urls.json` (encoding: UTF-8).
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] JSON validation successful: TRUE
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] Reading JSON from `/Users/jigsaw-0/Workspace/KMPC/Pre-WAT/R/renv/library/macos/R-4.4/aarch64-apple-darwin20/OmnipathR/internal/id_types.json` (encoding: UTF-8).
+[2025-01-24 10:19:06] [TRACE]   [OmnipathR] JSON validation successful: TRUE
